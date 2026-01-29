@@ -25,17 +25,19 @@ API que converte perguntas em linguagem natural em SQL seguro (MySQL), valida e 
 
 ## LLM output estruturado
 
-Quando o provider aceita function/tool calling, a resposta vem como JSON estruturado.  
+Quando o provider aceita function/tool calling, a resposta vem como JSON estruturado.
 Se o provider falhar em tool calling, a API faz fallback para parsing de JSON no conteúdo.
 
 ## Setup
 
-1) Instalar dependências:
+1. Instalar dependências:
+
 ```
 npm install
 ```
 
-2) Criar `.env`:
+2. Criar `.env`:
+
 ```
 PORT=3000
 
@@ -50,77 +52,91 @@ LLM_BASE_URL=https://api.groq.com/openai/v1
 LLM_MODEL=llama-3.1-8b-instant
 ```
 
-3) Rodar em desenvolvimento:
+3. Rodar em desenvolvimento:
+
 ```
 npm run dev
 ```
 
-4) Build e execução:
+4. Build e execução:
+
 ```
 npm run build
 npm start
 ```
 
 Swagger UI:
+
 ```
 http://localhost:3000/docs
 ```
 
+Vercel (produção):
+
+```
+https://fintechx-llm-api.vercel.app/docs
+```
+
 ## Endpoints
 
-- `GET /health`  
+- `GET /health`
   Health check simples.
 
-- `GET /v1/meta/schema`  
+- `GET /v1/meta/schema`
   Retorna tabelas/colunas do banco (cacheado).
 
-- `GET /v1/demo/top-products`  
+- `GET /v1/demo/top-products`
   Demo: top 10 produtos mais caros.
 
-- `POST /v1/ask`  
-  Gera SQL via LLM, valida e (opcionalmente) executa.  
+- `POST /v1/ask`
+  Gera SQL via LLM, valida e (opcionalmente) executa.
   Parâmetros:
   - `question` (string, obrigatório)
   - `execute` (boolean, default `true`)
   - `debug` (boolean, default `false`)
 
-- `POST /v1/sql/validate`  
+- `POST /v1/sql/validate`
   Valida SQL (SELECT-only).
 
-- `POST /v1/query`  
+- `POST /v1/query`
   Executa SQL validado.
 
 ## Exemplos (cURL)
 
-1) Auditoria (gera SQL, não executa):
+1. Auditoria (gera SQL, não executa):
+
 ```
 curl -X POST http://127.0.0.1:3000/v1/ask \
   -H "content-type: application/json" \
   -d '{"question":"Quais são os produtos mais caros?", "execute": false}'
 ```
 
-2) Produtos mais vendidos:
+2. Produtos mais vendidos:
+
 ```
 curl -X POST http://127.0.0.1:3000/v1/ask \
   -H "content-type: application/json" \
   -d '{"question":"Quais são os produtos mais vendidos em termos de quantidade?"}'
 ```
 
-3) Ticket médio:
+3. Ticket médio:
+
 ```
 curl -X POST http://127.0.0.1:3000/v1/ask \
   -H "content-type: application/json" \
   -d '{"question":"Qual o ticket médio por compra?"}'
 ```
 
-4) Vendas por cidade:
+4. Vendas por cidade:
+
 ```
 curl -X POST http://127.0.0.1:3000/v1/ask \
   -H "content-type: application/json" \
   -d '{"question":"Qual é o volume de vendas por cidade? Mostre top 10."}'
 ```
 
-5) SQL direto (validado):
+5. SQL direto (validado):
+
 ```
 curl -X POST http://127.0.0.1:3000/v1/query \
   -H "content-type: application/json" \
@@ -143,6 +159,7 @@ curl -X POST http://127.0.0.1:3000/v1/query \
 ## Observabilidade
 
 Todas as respostas de `/v1/ask` expõem:
+
 - `llm_ms`: latência do LLM.
 - `db_ms`: latência do banco (quando `execute=true`).
 
@@ -152,28 +169,24 @@ Logs estruturados incluem `request_id`, latências e quantidade de linhas.
 
 Este projeto usa um Northwind modernizado. Ex.: `products.product_name`, `products.list_price`, `orders.ship_city`, `order_details.unit_price`.
 
-## Próximos passos (opcional)
-
-Ideias que não são exigidas no teste, mas podem evoluir o projeto:
-- **RAG / busca vetorial**: guardar exemplos de perguntas + SQL para guiar novas consultas.
-- **Agents / Planner**: decompor perguntas complexas em sub-consultas.
-- **Métricas**: exportar métricas via Prometheus/Grafana.
-
 ## Como validar rapidamente
 
-1) Health:
+1. Health:
+
 ```
 curl http://127.0.0.1:3000/health
 ```
 
-2) Segurança:
+2. Segurança:
+
 ```
 curl -X POST http://127.0.0.1:3000/v1/query \
   -H "content-type: application/json" \
   -d '{"sql":"DELETE FROM products"}'
 ```
 
-3) Debug:
+3. Debug:
+
 ```
 curl -X POST http://127.0.0.1:3000/v1/ask \
   -H "content-type: application/json" \
