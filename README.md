@@ -77,6 +77,8 @@ Vercel (produção):
 https://fintechx-llm-api.vercel.app/docs
 ```
 
+Nota: no Vercel a API roda como Serverless Function (roteada por `/api` via `vercel.json`).
+
 ## Endpoints
 
 - `GET /health`
