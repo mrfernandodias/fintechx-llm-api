@@ -7,7 +7,7 @@ let readyPromise: Promise<void> | null = null
 
 async function ensureReady() {
   if (!readyPromise) {
-    readyPromise = app.ready()
+    readyPromise = app.ready().then(() => {})
   }
   await readyPromise
 }
