@@ -12,13 +12,16 @@ import { sqlRoute } from './routes/sql.route.js'
 
 
 export function buildApp() {
+  const isProd = process.env.NODE_ENV === 'production'
   const app = Fastify({
-    logger: {
-      transport: {
-        target: 'pino-pretty',
-        options: { translateTime: 'SYS:standard', singleLine: true }
-      }
-    }
+    logger: isProd
+      ? true
+      : {
+          transport: {
+            target: 'pino-pretty',
+            options: { translateTime: 'SYS:standard', singleLine: true },
+          },
+        },
   })
 
   app.register(swagger, {
